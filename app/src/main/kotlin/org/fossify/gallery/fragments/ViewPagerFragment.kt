@@ -1,5 +1,7 @@
 package org.fossify.gallery.fragments
 
+import android.content.res.Configuration
+import android.graphics.Point
 import android.provider.MediaStore
 import android.provider.MediaStore.Files
 import android.provider.MediaStore.Images
@@ -35,6 +37,11 @@ abstract class ViewPagerFragment : Fragment() {
         fun launchViewVideoIntent(path: String)
 
         fun isSlideShowActive(): Boolean
+    }
+
+    fun getResolution(path: String): Point? {
+        val file = File(path)
+        return requireContext().getResolution(file.absolutePath)
     }
 
     fun getMediumExtendedDetails(medium: Medium): String {

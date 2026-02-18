@@ -2,10 +2,10 @@ package org.fossify.gallery.helpers
 
 import android.graphics.*
 import com.squareup.picasso.Transformation
+import androidx.core.graphics.createBitmap
 
 // taken from https://stackoverflow.com/a/35241525/1967672
 class PicassoRoundedCornersTransformation(private val radius: Float) : Transformation {
-
     override fun transform(source: Bitmap): Bitmap {
         val size = Math.min(source.width, source.height)
         val x = (source.width - size) / 2
@@ -15,7 +15,8 @@ class PicassoRoundedCornersTransformation(private val radius: Float) : Transform
             source.recycle()
         }
 
-        val bitmap = Bitmap.createBitmap(size, size, source.config)
+        val bitmapConfig = source.config ?: Bitmap.Config.ARGB_8888 // Provide a default
+        val bitmap = createBitmap(size, size, bitmapConfig)
         val canvas = Canvas(bitmap)
         val paint = Paint()
         val shader = BitmapShader(squaredBitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP)

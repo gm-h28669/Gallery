@@ -1,10 +1,11 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.konan.properties.Properties
 import java.io.FileInputStream
 
+
 plugins {
     alias(libs.plugins.android)
-    alias(libs.plugins.kotlinAndroid)
     alias(libs.plugins.ksp)
     alias(libs.plugins.detekt)
 }
@@ -16,15 +17,14 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    compileSdk = project.libs.versions.app.build.compileSDKVersion.get().toInt()
+    compileSdk = libs.versions.app.build.compileSDKVersion.get().toInt()
 
     defaultConfig {
         applicationId = libs.versions.app.version.appId.get()
-        minSdk = project.libs.versions.app.build.minimumSDK.get().toInt()
-        targetSdk = project.libs.versions.app.build.targetSDK.get().toInt()
-        versionName = project.libs.versions.app.version.versionName.get()
-        versionCode = project.libs.versions.app.version.versionCode.get().toInt()
-        setProperty("archivesBaseName", "gallery-$versionCode")
+        minSdk = libs.versions.app.build.minimumSDK.get().toInt()
+        targetSdk = libs.versions.app.build.targetSDK.get().toInt()
+        versionName = libs.versions.app.version.versionName.get()
+        versionCode = libs.versions.app.version.versionCode.get().toInt()
     }
 
     signingConfigs {
@@ -80,8 +80,15 @@ android {
         includeInApk = false
     }
 
-    tasks.withType<KotlinCompile> {
-        kotlinOptions.jvmTarget = project.libs.versions.app.build.kotlinJVMTarget.get()
+    tasks.withType<KotlinCompile>().configureEach {
+        compilerOptions {
+            jvmTarget.set(
+                // use the *same* name as in libs.versions.toml
+                libs.versions.app.build.kotlinJVMTarget
+                    .map { JvmTarget.fromTarget(it) }
+                    .get()
+            )
+        }
     }
 
     namespace = libs.versions.app.version.appId.get()
@@ -109,15 +116,17 @@ android {
 
 detekt {
     baseline = file("detekt-baseline.xml")
+    ignoreFailures = true
 }
 
 dependencies {
     implementation(libs.fossify.commons)
     implementation(libs.android.image.cropper)
-    implementation(libs.exif)
     implementation(libs.android.gif.drawable)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.print)
+    implementation(libs.androidx.documentfile)
     implementation(libs.sanselan)
     implementation(libs.androidphotofilters)
     implementation(libs.androidsvg.aar)

@@ -1,6 +1,23 @@
 Changelog
 ==========
 
+Version 1.2.2 *(2025-05-28)*
+----------------------------
+
+* Subsampling Scale Image View (new version 3.2.0):
+  * For landscape images crop image to full screen. 
+  * For portrait style images resize image to view height.
+  
+* Gallery (new version 1.2.2):
+  * For landscape style images crop image to full screen. 
+  * For portrait style images resize image to view height.
+  * Improved fading transition to avoid jitter.
+    * The Problem: Calculating transparency (alpha) for every pixel of a high-res image 60 times per second 
+      is extremely CPU-intensive. This often causes frame drops, which we perceive as "jitter."
+    * The Solution: By setting the layer type to HARDWARE, we tell Android to render the view into an off-screen 
+      buffer (a texture) on the GPU. The GPU can then change the alpha of that entire texture almost instantaneously 
+      without re-drawing the complex view on every frame.
+
 Version 1.2.1 *(2024-09-28)*
 ----------------------------
 
