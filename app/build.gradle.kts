@@ -17,14 +17,14 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    compileSdk = libs.versions.app.build.compileSDKVersion.get().toInt()
+    compileSdk = libs.versions.appBuildCompileSdkVersion.get().toInt()
 
     defaultConfig {
-        applicationId = libs.versions.app.version.appId.get()
-        minSdk = libs.versions.app.build.minimumSDK.get().toInt()
-        targetSdk = libs.versions.app.build.targetSDK.get().toInt()
-        versionName = libs.versions.app.version.versionName.get()
-        versionCode = libs.versions.app.version.versionCode.get().toInt()
+        applicationId = libs.versions.appVersionAppId.get()
+        minSdk = libs.versions.appBuildMinimumSdk.get().toInt()
+        targetSdk = libs.versions.appBuildTargetSdk.get().toInt()
+        versionName = libs.versions.appVersionVersionName.get()
+        versionCode = libs.versions.appVersionVersionCode.get().toInt()
     }
 
     signingConfigs {
@@ -60,18 +60,14 @@ android {
         }
     }
 
-    flavorDimensions.add("licensing")
+    flavorDimensions += "licensing"
     productFlavors {
         register("foss")
         register("prepaid")
     }
 
-    sourceSets {
-        getByName("main").java.srcDirs("src/main/kotlin")
-    }
-
     compileOptions {
-        val currentJavaVersionFromLibs = JavaVersion.valueOf(libs.versions.app.build.javaVersion.get())
+        val currentJavaVersionFromLibs = JavaVersion.valueOf(libs.versions.appBuildJavaVersion.get())
         sourceCompatibility = currentJavaVersionFromLibs
         targetCompatibility = currentJavaVersionFromLibs
     }
@@ -84,26 +80,20 @@ android {
         compilerOptions {
             jvmTarget.set(
                 // use the *same* name as in libs.versions.toml
-                libs.versions.app.build.kotlinJVMTarget
+                libs.versions.appBuildKotlinJvmTarget
                     .map { JvmTarget.fromTarget(it) }
                     .get()
             )
         }
     }
 
-    namespace = libs.versions.app.version.appId.get()
+    namespace = libs.versions.appVersionAppId.get()
 
     lint {
         checkReleaseBuilds = false
         abortOnError = true
         warningsAsErrors = true
         baseline = file("lint-baseline.xml")
-    }
-
-    packaging {
-        resources {
-            excludes += "META-INF/library_release.kotlin_module"
-        }
     }
 
     bundle {
