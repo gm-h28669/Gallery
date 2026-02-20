@@ -72,13 +72,17 @@ enum class Orientation {
 
 class PhotoFragment : ViewPagerFragment() {
     private val DEFAULT_DOUBLE_TAP_ZOOM = 2f
-    private val ZOOMABLE_VIEW_LOAD_DELAY = 100L
+    private val ZOOMABLE_VIEW_LOAD_DELAY = 1000L
     private val SAME_ASPECT_RATIO_THRESHOLD = 0.01
 
     // devices with good displays, but the rest of the hardware not good enough for them
     private val WEIRD_DEVICES = arrayListOf(
         "motorola xt1685",
         "google nexus 5x"
+    )
+
+    private val LOW_PERFORMANCE_GPU_DEVICES = arrayListOf(
+        "samsung sm-t800"
     )
 
     var mCurrentRotationDegrees = 0
@@ -721,13 +725,21 @@ class PhotoFragment : ViewPagerFragment() {
         TODO("Panorama is not yet implemented.")
     }
 
-    private fun scheduleZoomableView() {
+    fun scheduleZoomableView() {
         mLoadZoomableViewHandler.removeCallbacksAndMessages(null)
         mLoadZoomableViewHandler.postDelayed({
-            if (mIsFragmentVisible && context?.config?.allowZoomingImages == true && (mMedium.isImage() || mMedium.isPortrait()) && !mIsSubsamplingVisible) {
+            if (mIsFragmentVisible && context?.config?.allowZoomingImages == true && (mMedium.isImage() || mMedium.isPortrait()) && !mIsSubsamplingVisible && listener?.isSlideShowActive() != true) {
                 addZoomableView()
             }
         }, ZOOMABLE_VIEW_LOAD_DELAY)
+    }
+
+    override fun resetFadeState() {
+        if (isAdded) {
+            mView.translationX = 0f
+            mView.alpha = 1f
+            mView.setLayerType(View.LAYER_TYPE_NONE, null)
+        }
     }
 
     private fun addZoomableView() {
@@ -751,7 +763,7 @@ class PhotoFragment : ViewPagerFragment() {
         }
 
         binding.subsamplingView.apply {
-            setMaxTileSize(if (showHighestQuality) Integer.MAX_VALUE else 4096)
+            setMaxTileSize(if (showHighestQuality) 8192 else 4096)
             setMinimumTileDpi(minTileDpi)
             background = Color.TRANSPARENT.toDrawable()
             bitmapDecoderFactory = bitmapDecoder
@@ -765,15 +777,15 @@ class PhotoFragment : ViewPagerFragment() {
 
             onImageEventListener = object : SubsamplingScaleImageView.OnImageEventListener {
                 override fun onReady() {
-                    background = if (config.blackBackground) {
-                        Color.BLACK
-                    } else {
-                        context.getProperBackgroundColor()
-                    }.toDrawable()
+                    // Do not set an opaque background here. Keeping it transparent
+                    // allows the low-res preview to stay visible while tiles are loading,
+                    // which eliminates the black flash on older GPUs.
+                    background = Color.TRANSPARENT.toDrawable()
 
                     val useWidth = sWidth(mImageOrientation)
                     val useHeight = sHeight(mImageOrientation)
-                    doubleTapZoomScale = getDoubleTapZoomScale(useWidth, useHeight)
+                    // keep smart zoom calculation disabled per user request
+                    // doubleTapZoomScale = getDoubleTapZoomScale(useWidth, useHeight)
                 }
 
                 override fun onImageLoadError(e: Exception) {
@@ -787,7 +799,8 @@ class PhotoFragment : ViewPagerFragment() {
                     val fullRotation = (rotation + degrees) % 360
                     val useWidth = if (fullRotation == 90 || fullRotation == 270) sHeight else sWidth
                     val useHeight = if (fullRotation == 90 || fullRotation == 270) sWidth else sHeight
-                    doubleTapZoomScale = getDoubleTapZoomScale(useWidth, useHeight)
+                    // keep smart zoom calculation disabled per user request
+                    // doubleTapZoomScale = getDoubleTapZoomScale(useWidth, useHeight)
                     mCurrentRotationDegrees = (mCurrentRotationDegrees + degrees) % 360
                     loadBitmap(false)
 
@@ -808,6 +821,7 @@ class PhotoFragment : ViewPagerFragment() {
         val averageDpi = (metrics.xdpi + metrics.ydpi) / 2
         val device = "${Build.BRAND} ${Build.MODEL}".lowercase(Locale.getDefault())
         return when {
+            LOW_PERFORMANCE_GPU_DEVICES.contains(device) -> LOW_TILE_DPI
             WEIRD_DEVICES.contains(device) -> WEIRD_TILE_DPI
             averageDpi > 400 -> HIGH_TILE_DPI
             averageDpi > 300 -> NORMAL_TILE_DPI

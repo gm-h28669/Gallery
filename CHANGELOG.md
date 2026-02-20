@@ -1,23 +1,27 @@
 Changelog
 ==========
 
-Version 1.2.2 *(2025-05-28)*
+Version 1.2.2 *(2025-02.20)*
 ----------------------------
 
-* Subsampling Scale Image View (new version 3.2.0):
-  * For landscape images crop image to full screen. 
-  * For portrait style images resize image to view height.
-  
-* Gallery (new version 1.2.2):
-  * For landscape style images crop image to full screen. 
-  * For portrait style images resize image to view height.
-  * Improved fading transition to avoid jitter.
-    * The Problem: Calculating transparency (alpha) for every pixel of a high-res image 60 times per second 
-      is extremely CPU-intensive. This often causes frame drops, which we perceive as "jitter."
-    * The Solution: By setting the layer type to HARDWARE, we tell Android to render the view into an off-screen 
-      buffer (a texture) on the GPU. The GPU can then change the alpha of that entire texture almost instantaneously 
-      without re-drawing the complex view on every frame.
+* **General**
+    * Updated target Android version to 15.
+    * Upgraded `Subsampling Scale Image View` library to version 3.2.0.
 
+* **Image Display & Zooming**
+    * Changed scaling logic: Landscape images now fit to screen width, while portrait images scale to view height.
+    * Changed behavior of Double-Tap Zoom:
+        * If "1:1 zooming" is enabled, double-tapping toggles directly between fit-to-screen and full size.
+        * New multi-step zoom: If 1:1 is disabled, double-tapping now zooms in/out in 25% increments.
+    * Resolved "black flash" glitches on high-resolution screens by optimizing background tile rendering.
+
+* **Slideshow Optimizations**
+    * Eliminated transition jitter using GPU hardware acceleration for fade effects.
+    * Added instant slideshow interruption: Tapping anywhere on the screen now reliably stops the show.
+    * Reduced CPU/GPU stress by pausing high-resolution rendering during active transitions.
+    * Specific performance optimizations for older high-resolution tablets (e.g., Samsung SM-T800).
+    * Improved memory cleanup of GPU resources after slideshow completion.
+  
 Version 1.2.1 *(2024-09-28)*
 ----------------------------
 
