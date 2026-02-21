@@ -2,7 +2,7 @@
 #jetbrains
 kotlin = "2.3.10"
 #KSP
-ksp = "2.3.2"
+ksp = "2.3.5"
 #Detekt
 detekt = "1.23.8"
 #AndroidX
@@ -36,7 +36,7 @@ subsamplingScaleImageView = "3.2.0"
 
 #build
 appBuildCompileSdkVersion = "36"
-appBuildTargetSdk = "36"
+appBuildTargetSdk = "35"
 appBuildMinimumSdk = "26"
 appBuildJavaVersion = "VERSION_17"
 appBuildKotlinJvmTarget = "17"
