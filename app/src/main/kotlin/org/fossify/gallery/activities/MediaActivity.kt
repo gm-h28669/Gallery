@@ -4,12 +4,12 @@ import android.app.Activity
 import android.app.WallpaperManager
 import android.content.Intent
 import android.graphics.Bitmap
-import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.view.ViewGroup
 import android.widget.RelativeLayout
 import androidx.activity.OnBackPressedCallback
+import androidx.core.net.toUri
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -832,7 +832,7 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
                 })
         } else if (mIsGetImageIntent || mIsGetVideoIntent || mIsGetAnyIntent) {
             Intent().apply {
-                data = Uri.parse(path)
+                data = path.toUri()
                 setResult(Activity.RESULT_OK, this)
             }
             finish()
