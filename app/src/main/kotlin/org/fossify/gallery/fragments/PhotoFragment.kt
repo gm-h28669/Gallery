@@ -517,21 +517,20 @@ class PhotoFragment : ViewPagerFragment() {
             .format(DecodeFormat.PREFER_ARGB_8888)
             .priority(priority)
             .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-            .apply {
-                val deviceOrientation = getDeviceOrientation()
-                val imageOrientation = getImageOrientation(mImageOrientation, getResolution(path))
 
-                if (deviceOrientation == imageOrientation) {
-                    centerCrop()
-                } else {
-                    fitCenter()
-                }
+        val deviceOrientation = getDeviceOrientation()
+        val imageOrientation = getImageOrientation(mImageOrientation, getResolution(path))
 
-                if (mCurrentRotationDegrees != 0) {
-                    transform(Rotate(mCurrentRotationDegrees))
-                    diskCacheStrategy(DiskCacheStrategy.NONE)
-                }
-            }
+        options = if (deviceOrientation == imageOrientation) {
+            options.centerCrop()
+        } else {
+            options.fitCenter()
+        }
+
+        if (mCurrentRotationDegrees != 0) {
+            options = options.transform(Rotate(mCurrentRotationDegrees))
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+        }
 
         Glide.with(requireContext())
             .load(path)

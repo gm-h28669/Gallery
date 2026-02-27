@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.view.ViewGroup
 import android.widget.RelativeLayout
+import androidx.activity.OnBackPressedCallback
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -108,6 +109,22 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
         binding.mediaEmptyTextPlaceholder2.setOnClickListener {
             showFilterMediaDialog()
         }
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (binding.mediaMenu.isSearchOpen) {
+                    binding.mediaMenu.closeSearch()
+                } else {
+                    if (config.showAll) {
+                        appLockManager.lock()
+                    }
+
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                    isEnabled = true
+                }
+            }
+        })
 
         updateWidgets()
     }
@@ -224,18 +241,6 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
         }
 
         mTempShowHiddenHandler.removeCallbacksAndMessages(null)
-    }
-
-    override fun onBackPressed() {
-        if (binding.mediaMenu.isSearchOpen) {
-            binding.mediaMenu.closeSearch()
-        } else {
-            if (config.showAll) {
-                appLockManager.lock()
-            }
-
-            super.onBackPressed()
-        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, resultData: Intent?) {
@@ -392,7 +397,7 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
             if (!mShowAll) {
                 binding.mediaMenu.toggleForceArrowBackIcon(true)
                 binding.mediaMenu.onNavigateBackClickListener = {
-                    onBackPressed()
+                    onBackPressedDispatcher.onBackPressed()
                 }
             }
 

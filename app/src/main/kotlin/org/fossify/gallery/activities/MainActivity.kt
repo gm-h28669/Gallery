@@ -12,6 +12,7 @@ import android.provider.MediaStore.Video
 import android.view.ViewGroup
 import android.widget.RelativeLayout
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.recyclerview.widget.RecyclerView
 import org.fossify.commons.dialogs.CreateNewFolderDialog
 import org.fossify.commons.dialogs.FilePickerDialog
@@ -263,6 +264,29 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
             launchSearchActivity()
         }
 
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (binding.mainMenu.isSearchOpen) {
+                    binding.mainMenu.closeSearch()
+                } else if (config.groupDirectSubfolders) {
+                    if (mCurrentPathPrefix.isEmpty()) {
+                        isEnabled = false
+                        onBackPressedDispatcher.onBackPressed()
+                        isEnabled = true
+                    } else {
+                        mOpenedSubfolders.removeLast()
+                        mCurrentPathPrefix = mOpenedSubfolders.last()
+                        setupAdapter(mDirs)
+                    }
+                } else {
+                    appLockManager.lock()
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                    isEnabled = true
+                }
+            }
+        })
+
         // just request the permission, tryLoadGallery will then trigger in onResume
         handleMediaPermissions()
     }
@@ -382,23 +406,6 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
                 mLastMediaFetcher?.shouldStop = true
                 GalleryDatabase.destroyInstance()
             }
-        }
-    }
-
-    override fun onBackPressed() {
-        if (binding.mainMenu.isSearchOpen) {
-            binding.mainMenu.closeSearch()
-        } else if (config.groupDirectSubfolders) {
-            if (mCurrentPathPrefix.isEmpty()) {
-                super.onBackPressed()
-            } else {
-                mOpenedSubfolders.removeLast()
-                mCurrentPathPrefix = mOpenedSubfolders.last()
-                setupAdapter(mDirs)
-            }
-        } else {
-            appLockManager.lock()
-            super.onBackPressed()
         }
     }
 
