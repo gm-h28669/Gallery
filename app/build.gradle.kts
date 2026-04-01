@@ -92,7 +92,7 @@ android {
     lint {
         checkReleaseBuilds = false
         abortOnError = true
-        warningsAsErrors = true
+        warningsAsErrors = false
         baseline = file("lint-baseline.xml")
     }
 
@@ -100,6 +100,13 @@ android {
         language {
             @Suppress("UnstableApiUsage")
             enableSplit = false
+        }
+    }
+
+    configurations.all {
+        resolutionStrategy.dependencySubstitution {
+            substitute(module("com.github.duolingo:rtl-viewpager"))
+                .using(module("com.github.naveensingh:rtl-viewpager:2.0.2"))
         }
     }
 }

@@ -40,6 +40,9 @@
     <uses-feature
         android:name="android.hardware.faketouch"
         android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
 
     <application
         android:name="org.fossify.gallery.App"
