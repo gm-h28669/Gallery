@@ -106,12 +106,6 @@ android {
         generateLocaleConfig = true
     }
 
-    tasks.withType<KotlinCompile> {
-        compilerOptions.jvmTarget.set(
-            JvmTarget.fromTarget(project.libs.versions.app.build.kotlinJVMTarget.get())
-        )
-    }
-
     namespace = project.property("APP_ID").toString()
 
     lint {
@@ -175,4 +169,10 @@ dependencies {
     implementation(libs.bundles.room)
     ksp(libs.androidx.room.compiler)
     detektPlugins(libs.compose.detekt)
+}
+
+tasks.withType<KotlinCompile> {
+    compilerOptions.jvmTarget.set(
+        JvmTarget.fromTarget(project.libs.versions.app.build.kotlinJVMTarget.get())
+    )
 }

@@ -17,9 +17,9 @@ exif = "1.0.1"
 #Room
 room = "2.8.4"
 #Fossify
-commons = "6.1.6"
+commons = "6.1.6-local"
 #Gradle4
-gradlePlugins-agp = "9.0.1"
+gradlePlugins-agp = "9.1.0"
 #Other
 androidGifDrawable = "1.2.31"
 androidImageCropper = "4.7.0"
@@ -35,7 +35,7 @@ media3Exoplayer = "1.10.0"
 okhttp = "5.3.2"
 okio = "3.17.0"
 picasso = "2.71828"
-subsamplingScaleImageView = "d705c3c4ad"
+subsamplingScaleImageView = "3.3.0-local"
 #build
 app-build-compileSDKVersion = "36"
 app-build-targetSDK = "36"
