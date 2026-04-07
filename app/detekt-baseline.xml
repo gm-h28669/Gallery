@@ -15,7 +15,7 @@
     <ID>ComplexCondition:MediaFetcher.kt$MediaFetcher$isImage || isVideo || isGif || isRaw</ID>
     <ID>ComplexCondition:MediaSideScroll.kt$MediaSideScroll$(percent == 100 &amp;&amp; event.rawY &gt; mLastTouchY) || (percent == -100 &amp;&amp; event.rawY &lt; mLastTouchY)</ID>
     <ID>ComplexCondition:PhotoFragment.kt$PhotoFragment$isRPlus() &amp;&amp; !isExternalStorageManager() &amp;&amp; mMedium.path.startsWith("/storage/") &amp;&amp; mMedium.isHidden()</ID>
-    <ID>ComplexCondition:PhotoFragment.kt$PhotoFragment$mIsFragmentVisible &amp;&amp; context?.config?.allowZoomingImages == true &amp;&amp; (mMedium.isImage() || mMedium.isPortrait()) &amp;&amp; !mIsSubsamplingVisible</ID>
+    <ID>ComplexCondition:PhotoFragment.kt$PhotoFragment$mIsFragmentVisible &amp;&amp; context?.config?.allowZoomingImages == true &amp;&amp; (mMedium.isImage() || mMedium.isPortrait()) &amp;&amp; !mIsSubsamplingVisible &amp;&amp; listener?.isSlideShowActive() == false</ID>
     <ID>ComplexCondition:PhotoFragment.kt$PhotoFragment$mStoredShowExtendedDetails &amp;&amp; isVisible() &amp;&amp; context != null &amp;&amp; resources != null</ID>
     <ID>ComplexCondition:PhotoVideoActivity.kt$PhotoVideoActivity$realPath != mUri.toString() &amp;&amp; realPath.isNotEmpty() &amp;&amp; mUri!!.authority != "mms" &amp;&amp; filename.contains('.') &amp;&amp; getDoesFilePathExist(realPath)</ID>
     <ID>ComplexCondition:PicassoRegionDecoder.kt$PicassoRegionDecoder$(rect.width() &gt; rect.height() &amp;&amp; screenWidth &gt; screenHeight) || (rect.height() &gt; rect.width() &amp;&amp; screenHeight &gt; screenWidth)</ID>
@@ -174,7 +174,6 @@
     <ID>MagicNumber:OtherAspectRatioDialog.kt$OtherAspectRatioDialog$9f</ID>
     <ID>MagicNumber:PhotoFragment.kt$PhotoFragment$0.01</ID>
     <ID>MagicNumber:PhotoFragment.kt$PhotoFragment$100</ID>
-    <ID>MagicNumber:PhotoFragment.kt$PhotoFragment$100L</ID>
     <ID>MagicNumber:PhotoFragment.kt$PhotoFragment$10f</ID>
     <ID>MagicNumber:PhotoFragment.kt$PhotoFragment$180</ID>
     <ID>MagicNumber:PhotoFragment.kt$PhotoFragment$270</ID>
@@ -184,10 +183,9 @@
     <ID>MagicNumber:PhotoFragment.kt$PhotoFragment$4096</ID>
     <ID>MagicNumber:PhotoFragment.kt$PhotoFragment$50</ID>
     <ID>MagicNumber:PhotoFragment.kt$PhotoFragment$7</ID>
+    <ID>MagicNumber:PhotoFragment.kt$PhotoFragment$8192</ID>
     <ID>MagicNumber:PhotoFragment.kt$PhotoFragment$90</ID>
-    <ID>MagicNumber:PhotoFragment.kt$PhotoFragment.&lt;no name provided&gt;$270</ID>
     <ID>MagicNumber:PhotoFragment.kt$PhotoFragment.&lt;no name provided&gt;$360</ID>
-    <ID>MagicNumber:PhotoFragment.kt$PhotoFragment.&lt;no name provided&gt;$90</ID>
     <ID>MagicNumber:PlaybackSpeedFragment.kt$PlaybackSpeedFragment$0.05f</ID>
     <ID>MagicNumber:PlaybackSpeedFragment.kt$PlaybackSpeedFragment$0.25f</ID>
     <ID>MagicNumber:PlaybackSpeedFragment.kt$PlaybackSpeedFragment$100</ID>
@@ -346,16 +344,18 @@
     <ID>MaxLineLength:MyWidgetProvider.kt$MyWidgetProvider$override</ID>
     <ID>MaxLineLength:MyWidgetProvider.kt$MyWidgetProvider$val pendingIntent = PendingIntent.getActivity(context, widget.widgetId, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)</ID>
     <ID>MaxLineLength:NewPhotoFetcher.kt$NewPhotoFetcher$if</ID>
+    <ID>MaxLineLength:PhotoFragment.kt$PhotoFragment$// ensure thumbnail tags are removed (they shouldn't exist in a fresh compress, but good for safety)</ID>
+    <ID>MaxLineLength:PhotoFragment.kt$PhotoFragment$ExifInterface(it).getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)</ID>
     <ID>MaxLineLength:PhotoFragment.kt$PhotoFragment$if</ID>
-    <ID>MaxLineLength:PhotoFragment.kt$PhotoFragment$orient = exif2.getTag(ExifInterface.TAG_ORIENTATION)?.getValueAsInt(defaultOrientation) ?: defaultOrientation</ID>
+    <ID>MaxLineLength:PhotoFragment.kt$PhotoFragment$orientation = ExifInterface(it).getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED)</ID>
+    <ID>MaxLineLength:PhotoFragment.kt$PhotoFragment$orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED)</ID>
     <ID>MaxLineLength:PhotoFragment.kt$PhotoFragment$resources.getDimension(R.dimen.portrait_photos_stripe_height).toInt()</ID>
     <ID>MaxLineLength:PhotoFragment.kt$PhotoFragment$val imageParser = JpegImageParser().getXmpXml(ByteSourceInputStream(it, mMedium.name), HashMap&lt;String, Any&gt;())</ID>
+    <ID>MaxLineLength:PhotoFragment.kt$PhotoFragment$val isOTG = requireContext().isPathOnOTG(filePath) // file is located on USB media (OTG = USB On-The-Go)</ID>
     <ID>MaxLineLength:PhotoFragment.kt$PhotoFragment$var pathToLoad = if (getFilePathToShow().startsWith("content://")) getFilePathToShow() else "file://${getFilePathToShow()}"</ID>
     <ID>MaxLineLength:PhotoFragment.kt$PhotoFragment.&lt;no name provided&gt;$binding.gesturesView.controller.settings.isZoomEnabled = mMedium.isRaw() || mCurrentRotationDegrees != 0 || allowZoomingImages == false</ID>
     <ID>MaxLineLength:PhotoFragment.kt$PhotoFragment.&lt;no name provided&gt;$override</ID>
     <ID>MaxLineLength:PhotoFragment.kt$PhotoFragment.&lt;no name provided&gt;$setTextColor(if (context.config.blackBackground) Color.WHITE else context.getProperTextColor())</ID>
-    <ID>MaxLineLength:PhotoFragment.kt$PhotoFragment.&lt;no name provided&gt;$val useHeight = if (mImageOrientation == ORIENTATION_ROTATE_90 || mImageOrientation == ORIENTATION_ROTATE_270) sWidth else sHeight</ID>
-    <ID>MaxLineLength:PhotoFragment.kt$PhotoFragment.&lt;no name provided&gt;$val useWidth = if (mImageOrientation == ORIENTATION_ROTATE_90 || mImageOrientation == ORIENTATION_ROTATE_270) sHeight else sWidth</ID>
     <ID>MaxLineLength:PhotoVideoActivity.kt$PhotoVideoActivity$binding.bottomActions.bottomEdit.beVisibleIf(visibleBottomActions and BOTTOM_ACTION_EDIT != 0 &amp;&amp; mMedium?.isImage() == true)</ID>
     <ID>MaxLineLength:PhotoVideoActivity.kt$PhotoVideoActivity$binding.bottomActions.bottomSetAs.beVisibleIf(visibleBottomActions and BOTTOM_ACTION_SET_AS != 0 &amp;&amp; mMedium?.isImage() == true)</ID>
     <ID>MaxLineLength:PhotoVideoActivity.kt$PhotoVideoActivity$binding.fragmentViewerToolbar.title = Html.fromHtml("&lt;font color='${Color.WHITE.toHex()}'&gt;${mMedium!!.name}&lt;/font&gt;")</ID>
@@ -456,7 +456,9 @@
     <ID>NestedBlockDepth:MediaFetcher.kt$MediaFetcher$private fun getMediaInFolder( folder: String, isPickImage: Boolean, isPickVideo: Boolean, filterMedia: Int, getProperDateTaken: Boolean, getProperLastModified: Boolean, getProperFileSize: Boolean, favoritePaths: ArrayList&lt;String&gt;, getVideoDurations: Boolean, lastModifieds: HashMap&lt;String, Long&gt;, dateTakens: HashMap&lt;String, Long&gt; ): ArrayList&lt;Medium&gt;</ID>
     <ID>NestedBlockDepth:MediaFetcher.kt$MediaFetcher$private fun parseCursor(cursor: Cursor): LinkedHashSet&lt;String&gt;</ID>
     <ID>NestedBlockDepth:MediaSideScroll.kt$MediaSideScroll$override fun onTouchEvent(event: MotionEvent): Boolean</ID>
+    <ID>NestedBlockDepth:PhotoFragment.kt$PhotoFragment$@SuppressLint("ClickableViewAccessibility") override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View</ID>
     <ID>NestedBlockDepth:PhotoFragment.kt$PhotoFragment$override fun fullscreenToggled(isFullscreen: Boolean)</ID>
+    <ID>NestedBlockDepth:PhotoFragment.kt$PhotoFragment$private fun getImageOrientation(): Int</ID>
     <ID>NestedBlockDepth:PhotoVideoActivity.kt$PhotoVideoActivity$private fun checkIntent(savedInstanceState: Bundle? = null)</ID>
     <ID>NestedBlockDepth:SettingsActivity.kt$SettingsActivity$private fun parseFile(inputStream: InputStream?)</ID>
     <ID>NestedBlockDepth:String.kt$fun String.shouldFolderBeVisible( excludedPaths: MutableSet&lt;String&gt;, includedPaths: MutableSet&lt;String&gt;, showHidden: Boolean, folderNoMediaStatuses: HashMap&lt;String, Boolean&gt;, callback: (path: String, hasNoMedia: Boolean) -&gt; Unit ): Boolean</ID>
@@ -504,6 +506,7 @@
     <ID>TooGenericExceptionCaught:ViewPagerActivity.kt$ViewPagerActivity$e: Exception</ID>
     <ID>TooGenericExceptionCaught:ViewPagerActivity.kt$ViewPagerActivity.&lt;no name provided&gt;$e: Exception</ID>
     <ID>TooGenericExceptionCaught:ViewPagerFragment.kt$ViewPagerFragment$e: Exception</ID>
+    <ID>TooGenericExceptionThrown:PhotoFragment.kt$PhotoFragment$throw Exception("Failed to decode")</ID>
     <ID>TooGenericExceptionThrown:PicassoRegionDecoder.kt$PicassoRegionDecoder$throw RuntimeException("Region decoder returned null bitmap - image format may not be supported")</ID>
     <ID>TooManyFunctions:Activity.kt$org.fossify.gallery.extensions.Activity.kt</ID>
     <ID>TooManyFunctions:Config.kt$Config : BaseConfig</ID>
@@ -528,6 +531,7 @@
     <ID>TooManyFunctions:ViewPagerActivity.kt$ViewPagerActivity : BaseViewerActivityOnPageChangeListenerFragmentListener</ID>
     <ID>TooManyFunctions:WidgetConfigureActivity.kt$WidgetConfigureActivity : SimpleActivity</ID>
     <ID>UnusedPrivateMember:PhotoFragment.kt$PhotoFragment$private fun checkIfPanorama()</ID>
+    <ID>UnusedPrivateMember:PhotoFragment.kt$PhotoFragment$private fun getDoubleTapZoomScale(width: Int, height: Int): Float</ID>
     <ID>UnusedPrivateMember:VideoFragment.kt$VideoFragment$private fun checkIfPanorama()</ID>
     <ID>UnusedPrivateProperty:MyPagerAdapter.kt$MyPagerAdapter$pos</ID>
     <ID>UnusedPrivateProperty:PhotoFragment.kt$PhotoFragment$i</ID>
@@ -547,8 +551,9 @@
     <ID>VariableNaming:MediaSideScroll.kt$MediaSideScroll$private val SLIDE_INFO_FADE_DELAY = 1000L</ID>
     <ID>VariableNaming:PhotoFragment.kt$PhotoFragment$// devices with good displays, but the rest of the hardware not good enough for them private val WEIRD_DEVICES = arrayListOf( "motorola xt1685", "google nexus 5x" )</ID>
     <ID>VariableNaming:PhotoFragment.kt$PhotoFragment$private val DEFAULT_DOUBLE_TAP_ZOOM = 2f</ID>
+    <ID>VariableNaming:PhotoFragment.kt$PhotoFragment$private val LOW_PERFORMANCE_GPU_DEVICES = arrayListOf( "samsung sm-t800" )</ID>
     <ID>VariableNaming:PhotoFragment.kt$PhotoFragment$private val SAME_ASPECT_RATIO_THRESHOLD = 0.01</ID>
-    <ID>VariableNaming:PhotoFragment.kt$PhotoFragment$private val ZOOMABLE_VIEW_LOAD_DELAY = 100L</ID>
+    <ID>VariableNaming:PhotoFragment.kt$PhotoFragment$private val ZOOMABLE_VIEW_LOAD_DELAY = 1000L</ID>
     <ID>VariableNaming:PlaybackSpeedFragment.kt$PlaybackSpeedFragment$private val HALF_PROGRESS = MAX_PROGRESS / 2</ID>
     <ID>VariableNaming:PlaybackSpeedFragment.kt$PlaybackSpeedFragment$private val MAX_PLAYBACK_SPEED = 3f</ID>
     <ID>VariableNaming:PlaybackSpeedFragment.kt$PlaybackSpeedFragment$private val MAX_PROGRESS = (MAX_PLAYBACK_SPEED * 100 + MIN_PLAYBACK_SPEED * 100).toInt()</ID>

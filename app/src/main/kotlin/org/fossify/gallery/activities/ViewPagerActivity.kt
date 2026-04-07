@@ -23,6 +23,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.provider.MediaStore
 import android.view.MenuItem
+import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
 import android.view.animation.DecelerateInterpolator
@@ -717,6 +718,8 @@ class ViewPagerActivity : BaseViewerActivity(), ViewPager.OnPageChangeListener, 
             if (config.slideshowRandomOrder) {
                 mRandomSlideshowStopped = true
             }
+
+            (binding.viewPager.adapter as? MyPagerAdapter)?.slideshowStopped()
         }
     }
 
@@ -1539,5 +1542,13 @@ class ViewPagerActivity : BaseViewerActivity(), ViewPager.OnPageChangeListener, 
 
     private fun isExternalIntent(): Boolean {
         return !intent.getBooleanExtra(IS_FROM_GALLERY, false)
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        if (mIsSlideshowActive && ev.actionMasked == MotionEvent.ACTION_DOWN) {
+            // stop slideshow and ensure that top/bottom menus are displayed again
+            fragmentClicked()
+        }
+        return super.dispatchTouchEvent(ev)
     }
 }
