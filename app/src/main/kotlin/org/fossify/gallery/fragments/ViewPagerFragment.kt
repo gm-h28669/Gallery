@@ -25,6 +25,8 @@ abstract class ViewPagerFragment : Fragment() {
 
     abstract fun fullscreenToggled(isFullscreen: Boolean)
 
+    open fun resetFadeState() {}
+
     interface FragmentListener {
         fun fragmentClicked()
 
@@ -39,6 +41,11 @@ abstract class ViewPagerFragment : Fragment() {
         fun isSlideShowActive(): Boolean
 
         fun isFullScreen(): Boolean
+    }
+
+    fun getResolution(path: String): Point? {
+        val file = File(path)
+        return requireContext().getResolution(file.absolutePath)
     }
 
     fun getMediumExtendedDetails(medium: Medium): String {

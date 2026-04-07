@@ -5,6 +5,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+1.13.2 - 2026-04-05
+----------------------------
+### Changed
+- Updated target Android version to 15.
+- Updated to "Subsampling Scale Image View" library to version 3.2.0.
+- Image Display & Zooming
+    - Changed how images are rendered: Landscape images now fit to screen width, while portrait images scale to view height.
+    - Changed behavior of Double-Tap Zoom:
+        - If "1:1 zooming" is enabled, double-tapping toggles directly between fit-to-screen and full size.
+        - New multi-step zoom: If 1:1 is disabled, double-tapping now zooms in in 25% increments. Once full size is reached,
+          next double tap reverts back to fit-to-screen.
+- Slideshow Optimizations
+  - Added instant slideshow interruption: Tapping anywhere on the screen now reliably stops the show.
+  - Reduced CPU/GPU stress by pausing high-resolution rendering during active transitions.
+  - Specific performance optimizations for older high-resolution tablets (e.g., Samsung SM-T800).
+  - Improved memory cleanup of GPU resources after slideshow completion.
+
+### Fixed
+- Resolved "black flash" glitches on high-resolution screens by optimizing background tile rendering.
+- Eliminated transition jitter using GPU hardware acceleration for fade effects.
 
 ## [1.13.1] - 2026-02-14
 ### Changed

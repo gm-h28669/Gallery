@@ -21,3 +21,8 @@ native <methods>;
 
 # Reprint
 -keep class com.github.ajalt.reprint.module.** { *; }
+
+# Ignore Kotlin compiler-related service lookups that aren't needed at runtime
+-dontwarn org.jetbrains.kotlin.compiler.plugin.**
+-dontwarn org.jetbrains.kotlin.diagnostics.rendering.**
+-dontwarn org.jetbrains.kotlin.fir.extensions.**
