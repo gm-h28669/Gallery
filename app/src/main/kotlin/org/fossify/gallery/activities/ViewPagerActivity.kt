@@ -999,7 +999,11 @@ class ViewPagerActivity : BaseViewerActivity(), ViewPager.OnPageChangeListener, 
         }
 
         binding.bottomActions.bottomSlideshow.beVisibleIf(visibleBottomActions and BOTTOM_ACTION_SLIDESHOW != 0)
-        binding.bottomActions.bottomSlideshow.setOnLongClickListener { toast(R.string.slideshow); true }
+        binding.bottomActions.bottomSlideshow.setOnLongClickListener {
+            toast(R.string.slideshow);
+            startSlideshow();
+            true
+        }
         binding.bottomActions.bottomSlideshow.setOnClickListener {
             initSlideshow()
         }
