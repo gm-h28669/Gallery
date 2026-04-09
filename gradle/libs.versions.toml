@@ -35,7 +35,7 @@ media3Exoplayer = "1.10.0"
 okhttp = "5.3.2"
 okio = "3.17.0"
 picasso = "2.71828"
-subsamplingScaleImageView = "3.3.0-local"
+subsamplingScaleImageView = "1.0.0"
 #build
 app-build-compileSDKVersion = "36"
 app-build-targetSDK = "36"
@@ -63,7 +63,7 @@ fossify-commons = { module = "org.fossify:commons", version.ref = "commons" }
 #Other
 android-gif-drawable = { module = "pl.droidsonroids.gif:android-gif-drawable", version.ref = "androidGifDrawable" }
 android-image-cropper = { module = "com.vanniktech:android-image-cropper", version.ref = "androidImageCropper" }
-subsamplingscaleimageview = { module = "org.fossify:subsampling-scale-image-view", version.ref = "subsamplingScaleImageView" }
+subsamplingscaleimageview = { module = "com.github.gm-h28669.subsampling-scale-image-view:subsampling-scale-image-view", version.ref = "subsamplingScaleImageView" }
 androidsvg-aar = { module = "com.caverock:androidsvg-aar", version.ref = "androidsvgAar" }
 gestureviews = { module = "org.fossify:gestureviews", version.ref = "gestureviews" }
 androidphotofilters = { module = "com.github.naveensingh:androidphotofilters", version.ref = "androidphotofilters" }
