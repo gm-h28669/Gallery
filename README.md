@@ -1,5 +1,26 @@
 # Fossify Gallery
 
+*This app was forked from [Fossify Gallery](https://github.com/FossifyOrg/Gallery) project. At time of forking the latest release of Fossify Gallery was 1.13.1.*
+
+## What's New in Release 1.13.2 ##
+### Features & UI Improvements ###
+
+* **Full-screen fit:** image stretches to match screen width (landscape) or height (portrait), cropping edges as needed. Aspect ratio is maintained.
+* **Double-Tap Zoom:** On each double tap, the zoom level increases in 25% steps until 1:1 scale is reached. Once at 1:1 scale, the next double tap resets to fully zoomed out.
+* **Resume Slideshow:** Long-click the toolbar slideshow button to start/resume slideshow with current settings.
+  Adjusted image display by tablet orientation according to these rules:
+
+### Fixes ###
+* Eliminate slideshow jitter by using GPU hardware acceleration during fading.
+* Fixed "black flash" artifacts by keeping low-res previews visible during tile loading.
+
+### Optimizations ### 
+* Improve slideshow responsiveness with a global touch interceptor for instant interruption.
+* Optimize GPU performance for high-res displays (e.g. Samsung T800) by increasing tile size and reducing DPI load.
+* Implemented proper cleanup of GPU resources and transition states after slideshow completion.
+* Modernize back gesture logic and resolve Glide configuration Lint warnings.
+
+
 <img alt="Logo" src="graphics/icon.webp" width="120" />
 
 <a href='https://play.google.com/store/apps/details?id=org.fossify.gallery'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' height=80/></a> <a href="https://f-droid.org/en/packages/org.fossify.gallery/"><img src="https://fdroid.gitlab.io/artwork/badge/get-it-on-en.svg" alt="Get it on F-Droid" height=80/></a> <a href="https://apt.izzysoft.de/fdroid/index/apk/org.fossify.gallery"><img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" alt="Get it on IzzyOnDroid" height=80/></a>
