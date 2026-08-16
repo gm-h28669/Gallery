@@ -11,6 +11,7 @@ import android.provider.MediaStore
 import android.provider.MediaStore.Files
 import android.provider.MediaStore.Images
 import android.text.format.DateFormat
+import androidx.exifinterface.media.ExifInterface
 import org.fossify.commons.extensions.*
 import org.fossify.commons.helpers.*
 import org.fossify.gallery.R
@@ -19,6 +20,7 @@ import org.fossify.gallery.models.Medium
 import org.fossify.gallery.models.ThumbnailItem
 import org.fossify.gallery.models.ThumbnailSection
 import java.io.File
+import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
@@ -397,11 +399,17 @@ class MediaFetcher(val context: Context) {
 
                 if (getProperDateTaken) {
                     var newDateTaken = dateTakens.remove(path)
-                    if (newDateTaken == null) {
-                        newDateTaken = if (getProperLastModified) {
-                            lastModified
-                        } else {
-                            file.lastModified()
+                    if (newDateTaken == null || newDateTaken == 0L) {
+                        if (path.isImageFast() || path.isRawFast()) {
+                            newDateTaken = getDateTakenFromExif(path)
+                        }
+
+                        if (newDateTaken == null || newDateTaken == 0L) {
+                            newDateTaken = if (getProperLastModified) {
+                                lastModified
+                            } else {
+                                file.lastModified()
+                            }
                         }
                     }
                     dateTaken = newDateTaken
@@ -513,7 +521,10 @@ class MediaFetcher(val context: Context) {
                 var dateTaken = cursor.getLongValue(Images.Media.DATE_TAKEN)
 
                 if (getProperDateTaken) {
-                    dateTaken = dateTakens.remove(path) ?: lastModified
+                    dateTaken = dateTakens.remove(path) ?: 0L
+                    if (dateTaken == 0L && (path.isImageFast() || path.isRawFast())) {
+                        dateTaken = getDateTakenFromExif(path)
+                    }
                 }
 
                 if (dateTaken == 0L) {
@@ -613,7 +624,8 @@ class MediaFetcher(val context: Context) {
         if (folder != FAVORITES) {
             val projection = arrayOf(
                 Images.Media.DISPLAY_NAME,
-                Images.Media.DATE_TAKEN
+                Images.Media.DATE_TAKEN,
+                Images.Media.DATA
             )
 
             val uri = Files.getContentUri("external")
@@ -622,10 +634,20 @@ class MediaFetcher(val context: Context) {
 
             context.queryCursor(uri, projection, selection, selectionArgs) { cursor ->
                 try {
-                    val dateTaken = cursor.getLongValue(Images.Media.DATE_TAKEN)
+                    var dateTaken = cursor.getLongValue(Images.Media.DATE_TAKEN)
+                    val path = cursor.getStringValue(Images.Media.DATA)
+
+                    // start fix: for most images Android's MediaStore returns DateTaken as zero, even though
+                    // the EXIF DateTimeOriginal tag is present and valid.
+                    // Workaround is to get DateTimeOriginal again from EXIF meta data and convert it to
+                    // milliseconds since epoch.
+                    if (dateTaken == 0L && (path.isImageFast() || path.isRawFast())) {
+                        dateTaken = getDateTakenFromExif(path)
+                    }
+                    // end fix
+
                     if (dateTaken != 0L) {
-                        val name = cursor.getStringValue(Images.Media.DISPLAY_NAME)
-                        dateTakens["$folder/$name"] = dateTaken
+                        dateTakens[path] = dateTaken
                     }
                 } catch (e: Exception) {
                 }
@@ -661,9 +683,18 @@ class MediaFetcher(val context: Context) {
         try {
             context.queryCursor(uri, projection) { cursor ->
                 try {
-                    val dateTaken = cursor.getLongValue(Images.Media.DATE_TAKEN)
+                    var dateTaken = cursor.getLongValue(Images.Media.DATE_TAKEN)
+                    val path = cursor.getStringValue(Images.Media.DATA)
+                    // start fix: for most images Android's MediaStore returns DateTaken as zero, even though
+                    // the EXIF DateTimeOriginal tag is present and valid.
+                    // Workaround is to get DateTimeOriginal again from EXIF meta data and convert it to
+                    // milliseconds since epoch.
+                    if (dateTaken == 0L && (path.isImageFast() || path.isRawFast())) {
+                        dateTaken = getDateTakenFromExif(path)
+                    }
+                    // end fix
+                    
                     if (dateTaken != 0L) {
-                        val path = cursor.getStringValue(Images.Media.DATA)
                         dateTakens[path] = dateTaken
                     }
                 } catch (e: Exception) {
@@ -732,6 +763,24 @@ class MediaFetcher(val context: Context) {
         }
 
         return lastModifieds
+    }
+
+    // get DateTimeOriginal (i.e date picture was taken) from EXIF meta data
+    // and convert it to milliseconds since epoche
+    private fun getDateTakenFromExif(path: String): Long {
+        try {
+            val dateTimeOriginal = ExifInterface(path).getAttribute(ExifInterface.TAG_DATETIME_ORIGINAL)
+                ?: ExifInterface(path).getAttribute(ExifInterface.TAG_DATETIME)
+            if (dateTimeOriginal != null && dateTimeOriginal.length >= 11) {
+                val t = if (dateTimeOriginal.substring(10, 11) == "T") "'T'" else " "
+                val separator = dateTimeOriginal.substring(4, 5)
+                val format = "yyyy${separator}MM${separator}dd${t}kk:mm:ss"
+                val formatter = SimpleDateFormat(format, Locale.getDefault())
+                return formatter.parse(dateTimeOriginal)?.time ?: 0L
+            }
+        } catch (e: Exception) {
+        }
+        return 0L
     }
 
     private fun getFolderSizes(folder: String): HashMap<String, Long> {
