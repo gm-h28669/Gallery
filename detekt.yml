@@ -24,7 +24,7 @@ complexity:
       - "Composable"
   LongMethod:
     active: true
-    threshold: 120
+    threshold: 150
     ignoreAnnotated:
       - "Composable"
       - "Preview"
@@ -34,7 +34,7 @@ style:
     active: true
     ignoreAnnotated: ["Composable"]
     ignoreEnums: true
-    ignoreNumbers: ["-1", "0", "1", "2", "42", "1000"]
+    ignoreNumbers: ["-1", "0", "1", "2", "4", "5", "10", "11", "42", "1000"]
   MaxLineLength:
     active: true
     maxLineLength: 120

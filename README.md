@@ -2,6 +2,11 @@
 
 *This app was forked from [Fossify Gallery](https://github.com/FossifyOrg/Gallery) project. At time of forking the latest release of Fossify Gallery was 1.13.1.*
 
+## What's New in Release 1.13.3 ##
+
+### Fixes ###
+* Fixed "Group by DateTaken" functionality
+
 ## What's New in Release 1.13.2 ##
 ### Features & UI Improvements ###
 
