@@ -400,6 +400,7 @@ class MediaFetcher(val context: Context) {
                 if (getProperDateTaken) {
                     var newDateTaken = dateTakens.remove(path)
                     if (newDateTaken == null || newDateTaken == 0L) {
+                        // try to get date taken from image's EXIF metadata
                         if (path.isImageFast() || path.isRawFast()) {
                             newDateTaken = getDateTakenFromExif(path)
                         }
@@ -623,7 +624,6 @@ class MediaFetcher(val context: Context) {
         val dateTakens = HashMap<String, Long>()
         if (folder != FAVORITES) {
             val projection = arrayOf(
-                Images.Media.DISPLAY_NAME,
                 Images.Media.DATE_TAKEN,
                 Images.Media.DATA
             )
