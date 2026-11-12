@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<issues format="6" by="lint 9.0.1" type="baseline" client="gradle" dependencies="false" name="AGP (9.0.1)" variant="all" version="9.0.1">
+<issues format="6" by="lint 9.5.1" type="baseline" client="gradle" dependencies="false" name="AGP (9.5.1)" variant="all" version="9.5.1">
 
     <issue
         id="CheckResult"
@@ -101,6 +101,39 @@
     </issue>
 
     <issue
+        id="OldTargetApi"
+        message="Not targeting the latest versions of Android; compatibility modes apply. Consider testing and updating this version. Consult the `android.os.Build.VERSION_CODES` javadoc for details."
+        errorLine1="app-build-targetSDK = &quot;36&quot;"
+        errorLine2="                      ~~~~">
+        <location
+            file="../gradle/libs.versions.toml"
+            line="41"
+            column="23"/>
+    </issue>
+
+    <issue
+        id="ThreadConstraint"
+        message="Statement must run from `@WorkerThread`, incompatible with earlier code that must run from `@{Main,Ui}Thread`"
+        errorLine1="                binding.defaultImageView.isVisible() -> {"
+        errorLine2="                ^">
+        <location
+            file="src/main/kotlin/org/fossify/gallery/activities/EditActivity.kt"
+            line="465"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="ThreadConstraint"
+        message="Call must be from `@WorkerThread`, but super method `Fragment.onCreateView(…)` is allowing `@{Main,Ui}Thread`"
+        errorLine1="                    FileOutputStream(file).use {"
+        errorLine2="                                           ^">
+        <location
+            file="src/main/kotlin/org/fossify/gallery/fragments/PhotoFragment.kt"
+            line="242"
+            column="44"/>
+    </issue>
+
+    <issue
         id="UnusedAttribute"
         message="Attribute `targetCellWidth` is only used in API level 31 and higher (current min is 26)"
         errorLine1="    android:targetCellWidth=&quot;2&quot;"
@@ -123,17 +156,6 @@
     </issue>
 
     <issue
-        id="WrongThread"
-        message="Method compress must be called from the worker thread, currently inferred thread is main thread"
-        errorLine1="                    rotated.compress(Bitmap.CompressFormat.JPEG, 100, out)"
-        errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/kotlin/org/fossify/gallery/fragments/PhotoFragment.kt"
-            line="235"
-            column="21"/>
-    </issue>
-
-    <issue
         id="CustomSplashScreen"
         message="The application should not provide its own launch screen"
         errorLine1="class SplashActivity : BaseSplashActivity() {"
@@ -145,14 +167,69 @@
     </issue>
 
     <issue
-        id="AndroidGradlePluginVersion"
-        message="A newer version of com.android.application than 9.0.1 is available: 9.1.0"
-        errorLine1="gradlePlugins-agp = &quot;9.0.1&quot;"
-        errorLine2="                    ~~~~~~~">
+        id="GradleDependency"
+        message="A newer version of androidx.lifecycle:lifecycle-runtime than 2.10.0 is available: 2.11.0"
+        errorLine1="androidx-lifecycle = &quot;2.10.0&quot;"
+        errorLine2="                     ~~~~~~~~">
         <location
-            file="$HOME/work/Gallery/Gallery/gradle/libs.versions.toml"
-            line="22"
-            column="21"/>
+            file="../gradle/libs.versions.toml"
+            line="10"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.room:room-compiler than 2.8.4 is available: 2.8.5"
+        errorLine1="room = &quot;2.8.4&quot;"
+        errorLine2="       ~~~~~~~">
+        <location
+            file="../gradle/libs.versions.toml"
+            line="18"
+            column="8"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.room:room-ktx than 2.8.4 is available: 2.8.5"
+        errorLine1="room = &quot;2.8.4&quot;"
+        errorLine2="       ~~~~~~~">
+        <location
+            file="../gradle/libs.versions.toml"
+            line="18"
+            column="8"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.room:room-runtime than 2.8.4 is available: 2.8.5"
+        errorLine1="room = &quot;2.8.4&quot;"
+        errorLine2="       ~~~~~~~">
+        <location
+            file="../gradle/libs.versions.toml"
+            line="18"
+            column="8"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.media3:media3-exoplayer than 1.11.0 is available: 1.11.1"
+        errorLine1="media3Exoplayer = &quot;1.11.0&quot;"
+        errorLine2="                  ~~~~~~~~">
+        <location
+            file="../gradle/libs.versions.toml"
+            line="34"
+            column="19"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of `app-build-compileSDKVersion` than 36 is available: 37"
+        errorLine1="app-build-compileSDKVersion = &quot;36&quot;"
+        errorLine2="                              ~~~~">
+        <location
+            file="../gradle/libs.versions.toml"
+            line="40"
+            column="31"/>
     </issue>
 
     <issue
@@ -162,19 +239,74 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/AndroidManifest.xml"
-            line="284"
+            line="287"
             column="13"/>
     </issue>
 
     <issue
         id="NewerVersionAvailable"
-        message="A newer version of io.nlopez.compose.rules:detekt than 0.4.28 is available: 0.5.6"
-        errorLine1="detektCompose = &quot;0.4.28&quot;"
-        errorLine2="                ~~~~~~~~">
+        message="A newer version of io.nlopez.compose.rules:detekt than 0.6.4 is available: 0.6.8"
+        errorLine1="detektCompose = &quot;0.6.4&quot;"
+        errorLine2="                ~~~~~~~">
         <location
-            file="$HOME/work/Gallery/Gallery/gradle/libs.versions.toml"
+            file="../gradle/libs.versions.toml"
             line="8"
             column="17"/>
+    </issue>
+
+    <issue
+        id="NewerVersionAvailable"
+        message="A newer version of com.github.bumptech.glide:avif-integration than 5.0.5 is available: 5.0.9"
+        errorLine1="glideCompiler = &quot;5.0.5&quot;"
+        errorLine2="                ~~~~~~~">
+        <location
+            file="../gradle/libs.versions.toml"
+            line="27"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="NewerVersionAvailable"
+        message="A newer version of com.github.bumptech.glide:ksp than 5.0.5 is available: 5.0.9"
+        errorLine1="glideCompiler = &quot;5.0.5&quot;"
+        errorLine2="                ~~~~~~~">
+        <location
+            file="../gradle/libs.versions.toml"
+            line="27"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="NewerVersionAvailable"
+        message="A newer version of com.github.zjupure:webpdecoder than 2.7.4.16.0 is available: 2.8.5.0.9"
+        errorLine1="zjupureWebpdecoder = &quot;2.7.4.16.0&quot;"
+        errorLine2="                     ~~~~~~~~~~~~">
+        <location
+            file="../gradle/libs.versions.toml"
+            line="28"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="NewerVersionAvailable"
+        message="A newer version of com.squareup.okhttp3:okhttp than 5.5.0 is available: 5.5.1"
+        errorLine1="okhttp = &quot;5.5.0&quot;"
+        errorLine2="         ~~~~~~~">
+        <location
+            file="../gradle/libs.versions.toml"
+            line="35"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="NewerVersionAvailable"
+        message="A newer version of com.squareup.okio:okio than 3.18.1 is available: 3.18.2"
+        errorLine1="okio = &quot;3.18.1&quot;"
+        errorLine2="       ~~~~~~~~">
+        <location
+            file="../gradle/libs.versions.toml"
+            line="36"
+            column="8"/>
     </issue>
 
     <issue
@@ -214,14 +346,14 @@
         id="Aligned16KB"
         message="The native library `arm64-v8a/libNativeImageProcessor.so` (from `com.github.naveensingh:androidphotofilters:193f2ae509`) is not 16 KB aligned">
         <location
-            file="$GRADLE_USER_HOME/caches/9.4.1/transforms/51a908bb5df44a6eafbf9daeee56e27b/transformed/jetified-androidphotofilters-193f2ae509/jni/arm64-v8a/libNativeImageProcessor.so"/>
+            file="$GRADLE_USER_HOME/caches/9.6.0/transforms/b9794bfc9584941dbab34287aa7e13b6/transformed/jetified-androidphotofilters-193f2ae509/jni/arm64-v8a/libNativeImageProcessor.so"/>
     </issue>
 
     <issue
         id="Aligned16KB"
         message="The native library `arm64-v8a/libNativeImageProcessor.so` (from `com.github.naveensingh:androidphotofilters:193f2ae509`) is not 16 KB aligned">
         <location
-            file="$GRADLE_USER_HOME/caches/9.4.1/transforms/51a908bb5df44a6eafbf9daeee56e27b/transformed/jetified-androidphotofilters-193f2ae509/jni/arm64-v8a/libNativeImageProcessor.so"/>
+            file="$GRADLE_USER_HOME/caches/9.6.0/transforms/b9794bfc9584941dbab34287aa7e13b6/transformed/jetified-androidphotofilters-193f2ae509/jni/arm64-v8a/libNativeImageProcessor.so"/>
     </issue>
 
     <issue
@@ -230,7 +362,7 @@
         errorLine1="androidphotofilters = { module = &quot;com.github.naveensingh:androidphotofilters&quot;, version.ref = &quot;androidphotofilters&quot; }"
         errorLine2="                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="$HOME/work/Gallery/Gallery/gradle/libs.versions.toml"
+            file="../gradle/libs.versions.toml"
             line="69"
             column="24"/>
     </issue>
@@ -242,7 +374,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/AndroidManifest.xml"
-            line="284"
+            line="287"
             column="13"/>
     </issue>
 
@@ -319,7 +451,7 @@
         errorLine2="                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/kotlin/org/fossify/gallery/activities/ViewPagerActivity.kt"
-            line="882"
+            line="885"
             column="28"/>
     </issue>
 
@@ -2338,7 +2470,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;on_video_tap&quot; is not translated in &quot;hi&quot; (Hindi), &quot;fil&quot; (Filipino; Pilipino), &quot;lt&quot; (Lithuanian), &quot;lv&quot; (Latvian), &quot;hu&quot; (Hungarian), &quot;ia&quot; (Interlingua), &quot;mk&quot; (Macedonian), &quot;ml&quot; (Malayalam), &quot;ms&quot; (Malay), &quot;el&quot; (Greek), &quot;en&quot; (English), &quot;is&quot; (Icelandic), &quot;my&quot; (Burmese), &quot;ja&quot; (Japanese), &quot;ne&quot; (Nepali), &quot;az&quot; (Azerbaijani), &quot;fa&quot; (Persian), &quot;ro&quot; (Romanian), &quot;nn&quot; (Norwegian Nynorsk), &quot;be&quot; (Belarusian), &quot;fi&quot; (Finnish), &quot;bn&quot; (Bangla), &quot;fr&quot; (French), &quot;br&quot; (Breton), &quot;bs&quot; (Bosnian), &quot;si&quot; (Sinhala), &quot;sl&quot; (Slovenian), &quot;zgh&quot; (Standard Moroccan Tamazight), &quot;ltg&quot;, &quot;sr&quot; (Serbian), &quot;kn&quot; (Kannada), &quot;or&quot; (Odia), &quot;ko&quot; (Korean), &quot;gl&quot; (Galician), &quot;kr&quot; (Kanuri), &quot;sat&quot; (Santali), &quot;ta&quot; (Tamil), &quot;gu&quot; (Gujarati), &quot;cr&quot; (Cree), &quot;pa&quot; (Punjabi), &quot;te&quot; (Telugu), &quot;cy&quot; (Welsh), &quot;bqi&quot;, &quot;ckb&quot;, &quot;da&quot; (Danish)"
+        message="&quot;on_video_tap&quot; is not translated in &quot;hi&quot; (Hindi), &quot;fil&quot; (Filipino; Pilipino), &quot;lt&quot; (Lithuanian), &quot;lv&quot; (Latvian), &quot;ia&quot; (Interlingua), &quot;mk&quot; (Macedonian), &quot;ml&quot; (Malayalam), &quot;ms&quot; (Malay), &quot;el&quot; (Greek), &quot;en&quot; (English), &quot;is&quot; (Icelandic), &quot;my&quot; (Burmese), &quot;ja&quot; (Japanese), &quot;ne&quot; (Nepali), &quot;az&quot; (Azerbaijani), &quot;fa&quot; (Persian), &quot;ro&quot; (Romanian), &quot;nn&quot; (Norwegian Nynorsk), &quot;be&quot; (Belarusian), &quot;fi&quot; (Finnish), &quot;bn&quot; (Bangla), &quot;br&quot; (Breton), &quot;bs&quot; (Bosnian), &quot;si&quot; (Sinhala), &quot;sl&quot; (Slovenian), &quot;zgh&quot; (Standard Moroccan Tamazight), &quot;ltg&quot;, &quot;sr&quot; (Serbian), &quot;kn&quot; (Kannada), &quot;or&quot; (Odia), &quot;ko&quot; (Korean), &quot;gl&quot; (Galician), &quot;kr&quot; (Kanuri), &quot;sat&quot; (Santali), &quot;ta&quot; (Tamil), &quot;gu&quot; (Gujarati), &quot;cr&quot; (Cree), &quot;pa&quot; (Punjabi), &quot;te&quot; (Telugu), &quot;cy&quot; (Welsh), &quot;bqi&quot;, &quot;ckb&quot;, &quot;da&quot; (Danish)"
         errorLine1="    &lt;string name=&quot;on_video_tap&quot;>On video tap&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~">
         <location
@@ -2349,7 +2481,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;open_in_app_player&quot; is not translated in &quot;hi&quot; (Hindi), &quot;fil&quot; (Filipino; Pilipino), &quot;lt&quot; (Lithuanian), &quot;lv&quot; (Latvian), &quot;ia&quot; (Interlingua), &quot;mk&quot; (Macedonian), &quot;ml&quot; (Malayalam), &quot;ms&quot; (Malay), &quot;el&quot; (Greek), &quot;en&quot; (English), &quot;is&quot; (Icelandic), &quot;my&quot; (Burmese), &quot;ja&quot; (Japanese), &quot;ne&quot; (Nepali), &quot;az&quot; (Azerbaijani), &quot;fa&quot; (Persian), &quot;ro&quot; (Romanian), &quot;nn&quot; (Norwegian Nynorsk), &quot;be&quot; (Belarusian), &quot;fi&quot; (Finnish), &quot;bn&quot; (Bangla), &quot;fr&quot; (French), &quot;br&quot; (Breton), &quot;bs&quot; (Bosnian), &quot;si&quot; (Sinhala), &quot;sl&quot; (Slovenian), &quot;zgh&quot; (Standard Moroccan Tamazight), &quot;ltg&quot;, &quot;sr&quot; (Serbian), &quot;kn&quot; (Kannada), &quot;or&quot; (Odia), &quot;ko&quot; (Korean), &quot;gl&quot; (Galician), &quot;kr&quot; (Kanuri), &quot;sat&quot; (Santali), &quot;ta&quot; (Tamil), &quot;gu&quot; (Gujarati), &quot;cr&quot; (Cree), &quot;pa&quot; (Punjabi), &quot;te&quot; (Telugu), &quot;cy&quot; (Welsh), &quot;bqi&quot;, &quot;ckb&quot;, &quot;da&quot; (Danish)"
+        message="&quot;open_in_app_player&quot; is not translated in &quot;hi&quot; (Hindi), &quot;fil&quot; (Filipino; Pilipino), &quot;lt&quot; (Lithuanian), &quot;lv&quot; (Latvian), &quot;ia&quot; (Interlingua), &quot;mk&quot; (Macedonian), &quot;ml&quot; (Malayalam), &quot;ms&quot; (Malay), &quot;el&quot; (Greek), &quot;en&quot; (English), &quot;is&quot; (Icelandic), &quot;my&quot; (Burmese), &quot;ja&quot; (Japanese), &quot;ne&quot; (Nepali), &quot;az&quot; (Azerbaijani), &quot;fa&quot; (Persian), &quot;ro&quot; (Romanian), &quot;nn&quot; (Norwegian Nynorsk), &quot;be&quot; (Belarusian), &quot;fi&quot; (Finnish), &quot;bn&quot; (Bangla), &quot;br&quot; (Breton), &quot;bs&quot; (Bosnian), &quot;si&quot; (Sinhala), &quot;sl&quot; (Slovenian), &quot;zgh&quot; (Standard Moroccan Tamazight), &quot;ltg&quot;, &quot;sr&quot; (Serbian), &quot;kn&quot; (Kannada), &quot;or&quot; (Odia), &quot;ko&quot; (Korean), &quot;gl&quot; (Galician), &quot;kr&quot; (Kanuri), &quot;sat&quot; (Santali), &quot;ta&quot; (Tamil), &quot;gu&quot; (Gujarati), &quot;cr&quot; (Cree), &quot;pa&quot; (Punjabi), &quot;te&quot; (Telugu), &quot;cy&quot; (Welsh), &quot;bqi&quot;, &quot;ckb&quot;, &quot;da&quot; (Danish)"
         errorLine1="    &lt;string name=&quot;open_in_app_player&quot;>Open in-app player&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -3371,17 +3503,6 @@
     </issue>
 
     <issue
-        id="PermissionImpliesUnsupportedChromeOsHardware"
-        message="Permission exists without corresponding hardware `&lt;uses-feature android:name=&quot;android.hardware.camera&quot; required=&quot;false&quot;>` tag"
-        errorLine1="    &lt;uses-permission"
-        errorLine2="     ~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/AndroidManifest.xml"
-            line="31"
-            column="6"/>
-    </issue>
-
-    <issue
         id="UnsafeIntentLaunch"
         message="This intent could be coming from an untrusted source. It is later launched by an unprotected component org.fossify.gallery.activities.EditActivity. You could either make the component org.fossify.gallery.activities.EditActivity protected; or sanitize this intent using androidx.core.content.IntentSanitizer."
         errorLine1="        setResult(RESULT_OK, intent)"
@@ -3447,7 +3568,7 @@
         errorLine2="         ~~~~~~~~">
         <location
             file="src/main/AndroidManifest.xml"
-            line="301"
+            line="304"
             column="10"/>
     </issue>
 
@@ -3830,6 +3951,17 @@
             file="src/main/res/values/integers.xml"
             line="7"
             column="14"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.xml.locale_config` appears to be unused"
+        errorLine1="&lt;locale-config xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;>"
+        errorLine2="^">
+        <location
+            file="src/main/res/xml/locale_config.xml"
+            line="2"
+            column="1"/>
     </issue>
 
     <issue
@@ -4365,7 +4497,7 @@
 
     <issue
         id="IconMissingDensityFolder"
-        message="Missing density variation folders in `src/main/res`: drawable-mdpi">
+        message="Missing density variation folders in `src\main\res`: drawable-mdpi">
         <location
             file="src/main/res"/>
     </issue>
@@ -5594,160 +5726,6 @@
     <issue
         id="UseKtx"
         message="Use the KTX extension function `String.toUri` instead?"
-        errorLine1="            mMedium.path = requireContext().getRealPathFromURI(Uri.parse(mOriginalPath)) ?: mMedium.path"
-        errorLine2="                                                               ~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/kotlin/org/fossify/gallery/fragments/PhotoFragment.kt"
-            line="214"
-            column="64"/>
-    </issue>
-
-    <issue
-        id="UseKtx"
-        message="Use the KTX extension function `String.toUri` instead?"
-        errorLine1="                    var inputStream = requireContext().contentResolver.openInputStream(Uri.parse(mOriginalPath))"
-        errorLine2="                                                                                       ~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/kotlin/org/fossify/gallery/fragments/PhotoFragment.kt"
-            line="222"
-            column="88"/>
-    </issue>
-
-    <issue
-        id="UseKtx"
-        message="Use the KTX extension function `String.toUri` instead?"
-        errorLine1="                    inputStream = requireContext().contentResolver.openInputStream(Uri.parse(mOriginalPath))"
-        errorLine2="                                                                                   ~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/kotlin/org/fossify/gallery/fragments/PhotoFragment.kt"
-            line="227"
-            column="84"/>
-    </issue>
-
-    <issue
-        id="UseKtx"
-        message="Use the KTX extension function `String.toUri` instead?"
-        errorLine1="                    val file = File(requireContext().externalCacheDir, Uri.parse(mOriginalPath).lastPathSegment)"
-        errorLine2="                                                                       ~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/kotlin/org/fossify/gallery/fragments/PhotoFragment.kt"
-            line="233"
-            column="72"/>
-    </issue>
-
-    <issue
-        id="UseKtx"
-        message="Use the KTX extension function `String.toUri` instead?"
-        errorLine1="                InputSource.UriSource(requireContext().contentResolver, Uri.parse(pathToLoad))"
-        errorLine2="                                                                        ~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/kotlin/org/fossify/gallery/fragments/PhotoFragment.kt"
-            line="442"
-            column="73"/>
-    </issue>
-
-    <issue
-        id="UseKtx"
-        message="Use the KTX extension function `Int.toDrawable` instead?"
-        errorLine1="            background = ColorDrawable(Color.TRANSPARENT)"
-        errorLine2="                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/kotlin/org/fossify/gallery/fragments/PhotoFragment.kt"
-            line="764"
-            column="26"/>
-    </issue>
-
-    <issue
-        id="UseKtx"
-        message="Use the KTX extension function `Int.toDrawable` instead?"
-        errorLine1="            background = ColorDrawable(Color.TRANSPARENT)"
-        errorLine2="                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/kotlin/org/fossify/gallery/fragments/PhotoFragment.kt"
-            line="764"
-            column="26"/>
-    </issue>
-
-    <issue
-        id="UseKtx"
-        message="Use the KTX extension function `Int.toDrawable` instead?"
-        errorLine1="                    background = ColorDrawable("
-        errorLine2="                                 ^">
-        <location
-            file="src/main/kotlin/org/fossify/gallery/fragments/PhotoFragment.kt"
-            line="776"
-            column="34"/>
-    </issue>
-
-    <issue
-        id="UseKtx"
-        message="Use the KTX extension function `Int.toDrawable` instead?"
-        errorLine1="                    background = ColorDrawable("
-        errorLine2="                                 ^">
-        <location
-            file="src/main/kotlin/org/fossify/gallery/fragments/PhotoFragment.kt"
-            line="776"
-            column="34"/>
-    </issue>
-
-    <issue
-        id="UseKtx"
-        message="Use the KTX extension function `Int.toDrawable` instead?"
-        errorLine1="                    background = ColorDrawable(Color.TRANSPARENT)"
-        errorLine2="                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/kotlin/org/fossify/gallery/fragments/PhotoFragment.kt"
-            line="791"
-            column="34"/>
-    </issue>
-
-    <issue
-        id="UseKtx"
-        message="Use the KTX extension function `Int.toDrawable` instead?"
-        errorLine1="                    background = ColorDrawable(Color.TRANSPARENT)"
-        errorLine2="                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/kotlin/org/fossify/gallery/fragments/PhotoFragment.kt"
-            line="791"
-            column="34"/>
-    </issue>
-
-    <issue
-        id="UseKtx"
-        message="Use the KTX extension function `String.toUri` instead?"
-        errorLine1="                requireContext().contentResolver.openInputStream(Uri.parse(mMedium.path))"
-        errorLine2="                                                                 ~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/kotlin/org/fossify/gallery/fragments/PhotoFragment.kt"
-            line="831"
-            column="66"/>
-    </issue>
-
-    <issue
-        id="UseKtx"
-        message="Use the KTX extension function `String.toUri` instead?"
-        errorLine1="                val inputStream = requireContext().contentResolver.openInputStream(Uri.parse(path))"
-        errorLine2="                                                                                   ~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/kotlin/org/fossify/gallery/fragments/PhotoFragment.kt"
-            line="862"
-            column="84"/>
-    </issue>
-
-    <issue
-        id="UseKtx"
-        message="Use the KTX extension function `String.toUri` instead?"
-        errorLine1="                val uri = if (path.startsWith(&quot;content:/&quot;)) Uri.parse(path) else Uri.fromFile(File(path))"
-        errorLine2="                                                            ~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/kotlin/org/fossify/gallery/fragments/PhotoFragment.kt"
-            line="873"
-            column="61"/>
-    </issue>
-
-    <issue
-        id="UseKtx"
-        message="Use the KTX extension function `String.toUri` instead?"
         errorLine1="        val newUri = Uri.parse(uri.toString().replace(&quot;%&quot;, &quot;%25&quot;).replace(&quot;#&quot;, &quot;%23&quot;))"
         errorLine2="                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -5864,28 +5842,6 @@
             file="src/main/kotlin/org/fossify/gallery/views/MediaSideScroll.kt"
             line="84"
             column="18"/>
-    </issue>
-
-    <issue
-        id="ClickableViewAccessibility"
-        message="Custom view ``RecyclerView`` has `setOnTouchListener` called on it but does not override `performClick`"
-        errorLine1="        binding.photoPortraitStripe.setOnTouchListener { v, event ->"
-        errorLine2="        ^">
-        <location
-            file="src/main/kotlin/org/fossify/gallery/fragments/PhotoFragment.kt"
-            line="705"
-            column="9"/>
-    </issue>
-
-    <issue
-        id="ClickableViewAccessibility"
-        message="`onTouch` lambda should call `View#performClick` when a click is detected"
-        errorLine1="        binding.photoPortraitStripe.setOnTouchListener { v, event ->"
-        errorLine2="                                                       ^">
-        <location
-            file="src/main/kotlin/org/fossify/gallery/fragments/PhotoFragment.kt"
-            line="705"
-            column="56"/>
     </issue>
 
     <issue
