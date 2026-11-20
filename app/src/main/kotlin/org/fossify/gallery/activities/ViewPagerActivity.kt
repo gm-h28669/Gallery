@@ -1,6 +1,7 @@
 package org.fossify.gallery.activities
 
 import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -25,10 +26,14 @@ import android.provider.MediaStore
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.animation.DecelerateInterpolator
+import android.widget.ImageView
+import android.widget.RelativeLayout
 import android.widget.Toast
 import androidx.core.graphics.drawable.toDrawable
+import androidx.core.view.drawToBitmap
 import androidx.exifinterface.media.ExifInterface
 import androidx.print.PrintHelper
 import androidx.viewpager.widget.ViewPager
@@ -182,6 +187,7 @@ import org.fossify.gallery.helpers.getPermissionToRequest
 import org.fossify.gallery.models.Medium
 import org.fossify.gallery.models.ThumbnailItem
 import java.io.File
+import kotlin.math.abs
 import kotlin.math.min
 
 @Suppress("UNCHECKED_CAST")
@@ -189,6 +195,8 @@ class ViewPagerActivity : BaseViewerActivity(), ViewPager.OnPageChangeListener, 
     companion object {
         private const val REQUEST_VIEW_VIDEO = 1
         private const val SAVED_PATH = "current_path"
+        private const val MAX_WAIT_TIME_MS = SLIDESHOW_FADE_DURATION
+        private const val POLL_INTERVAL_MS = 16L
     }
 
     private var mPath = ""
@@ -205,6 +213,11 @@ class ViewPagerActivity : BaseViewerActivity(), ViewPager.OnPageChangeListener, 
     private var mSlideshowMedia = mutableListOf<Medium>()
     private var mAreSlideShowMediaVisible = false
     private var mRandomSlideshowStopped = false
+    private var mSlideshowLoopAnimator: ValueAnimator? = null
+    private var mSlideshowTransitionAnimator: ValueAnimator? = null
+    private var mLoopStartPosition = -1
+    private var mSlideshowLoopOverlayView: ImageView? = null
+    private var mSlideshowLoopOverlayBitmap: Bitmap? = null
 
     private var mIsOrientationLocked = false
 
@@ -641,9 +654,20 @@ class ViewPagerActivity : BaseViewerActivity(), ViewPager.OnPageChangeListener, 
 
     private fun animatePagerTransition(forward: Boolean) {
         val oldPosition = binding.viewPager.currentItem
+        val count = binding.viewPager.adapter?.count ?: 0
+        if (count == 0) return
+
+        val isAtBoundary = (forward && oldPosition == count - 1) || (!forward && oldPosition == 0)
+        if (isAtBoundary) {
+            slideshowEnded(forward)
+            return
+        }
+
         val animator = ValueAnimator.ofInt(0, binding.viewPager.width)
+        mSlideshowTransitionAnimator = animator
         animator.addListener(object : Animator.AnimatorListener {
             override fun onAnimationEnd(animation: Animator) {
+                mSlideshowTransitionAnimator = null
                 if (binding.viewPager.isFakeDragging) {
                     try {
                         binding.viewPager.endFakeDrag()
@@ -658,7 +682,12 @@ class ViewPagerActivity : BaseViewerActivity(), ViewPager.OnPageChangeListener, 
             }
 
             override fun onAnimationCancel(animation: Animator) {
-                binding.viewPager.endFakeDrag()
+                mSlideshowTransitionAnimator = null
+                try {
+                    if (binding.viewPager.isFakeDragging) {
+                        binding.viewPager.endFakeDrag()
+                    }
+                } catch (ignored: Exception) {}
             }
 
             override fun onAnimationStart(animation: Animator) {}
@@ -695,10 +724,13 @@ class ViewPagerActivity : BaseViewerActivity(), ViewPager.OnPageChangeListener, 
 
     private fun slideshowEnded(forward: Boolean) {
         if (config.loopSlideshow) {
-            if (forward) {
-                binding.viewPager.setCurrentItem(0, false)
+            val count = binding.viewPager.adapter?.count ?: 0
+            val targetPosition = if (forward) 0 else count - 1
+            val oldPosition = binding.viewPager.currentItem
+            if (oldPosition == targetPosition || config.slideshowAnimation == SLIDESHOW_ANIMATION_NONE) {
+                binding.viewPager.setCurrentItem(targetPosition, false)
             } else {
-                binding.viewPager.setCurrentItem(binding.viewPager.adapter!!.count - 1, false)
+                performLoopPageTransition(forward, targetPosition)
             }
         } else {
             stopSlideshow()
@@ -706,8 +738,235 @@ class ViewPagerActivity : BaseViewerActivity(), ViewPager.OnPageChangeListener, 
         }
     }
 
+    /**
+     * Applies loop transition transformations (Slide or Fade) for non-adjacent page jumps
+     * (e.g. last image <-> first image). Unlike standard ViewPager scrolling where scrollX
+     * drives animations, loop transitions overlay a bitmap snapshot of the outgoing page and
+     * explicitly animate view properties (translationX and alpha).
+     */
+    private fun applyLoopTransformation(view: View, position: Float) {
+        val absPos = abs(position)
+        if (config.slideshowAnimation == SLIDESHOW_ANIMATION_FADE) {
+            // Keep view centered at X = 0 and cross-fade alpha
+            view.translationX = 0f
+            view.alpha = (1f - absPos).coerceIn(0f, 1f)
+        } else {
+            // Slide view horizontally by position offset
+            view.translationX = view.width * position
+            view.alpha = 1f
+        }
+    }
+
+    private fun resetLoopTransformation(view: View) {
+        view.translationX = 0f
+        view.alpha = 1f
+        view.setLayerType(View.LAYER_TYPE_NONE, null)
+    }
+
+    /**
+     * Handles loop boundary transitions (last -> first or first -> last image).
+     * Because ViewPager adapter items are linear (0..N-1), fakeDragBy cannot scroll across
+     * non-adjacent boundaries. We capture the current screen as a bitmap overlay on fragmentHolder,
+     * instantly jump the ViewPager to the target position, wait for the target fragment to render,
+     * and animate a smooth transition.
+     */
+    private fun performLoopPageTransition(forward: Boolean, targetPosition: Int) {
+        if (binding.viewPager.width <= 0 || binding.viewPager.height <= 0) {
+            binding.viewPager.setCurrentItem(targetPosition, false)
+            return
+        }
+
+        // Record starting position so we can restore it if the slideshow is cancelled mid-transition
+        mLoopStartPosition = binding.viewPager.currentItem
+
+        // Preload target medium with Glide so its bitmap is cached and loads instantly
+        val targetMedium = mSlideshowMedia.getOrNull(targetPosition)
+        if (targetMedium != null) {
+            try {
+                Glide.with(this).load(targetMedium.path).preload()
+            } catch (ignored: Exception) {}
+        }
+
+        try {
+            // Capture bitmap of the current screen (outgoing page)
+            val bitmap = binding.viewPager.drawToBitmap()
+            mSlideshowLoopOverlayBitmap = bitmap
+
+            // Create an overlay ImageView showing the outgoing page bitmap and add it to fragmentHolder.
+            // Note: FIT_CENTER works unconditionally here because drawToBitmap() captures an exact 1:1
+            // pixel snapshot of the screen (respecting whatever special landscape/portrait scaling rules
+            // were applied to the outgoing view), so scaling it back to MATCH_PARENT preserves exact proportions.
+            val overlayView = ImageView(this).apply {
+                setImageBitmap(bitmap)
+                scaleType = ImageView.ScaleType.FIT_CENTER
+            }
+            mSlideshowLoopOverlayView = overlayView
+
+            val params = RelativeLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+            binding.fragmentHolder.addView(overlayView, params)
+
+            applyLoopTransformation(overlayView, 0f)
+
+            // Instantly switch ViewPager to the target position underneath the overlay view
+            binding.viewPager.setCurrentItem(targetPosition, false)
+
+            val duration = if (config.slideshowAnimation == SLIDESHOW_ANIMATION_SLIDE) {
+                SLIDESHOW_SLIDE_DURATION
+            } else {
+                SLIDESHOW_FADE_DURATION
+            }
+
+            // Wait for target fragment to render before starting transition animation
+            startLoopTransitionWhenTargetReady(forward, targetPosition, overlayView, duration)
+        } catch (e: Exception) {
+            binding.viewPager.setCurrentItem(targetPosition, false)
+        }
+    }
+
+    /**
+     * Polls every 16ms to ensure the target fragment's view and drawable are fully rendered/loaded
+     * before fading/sliding out the outgoing overlay view, preventing black screen flashes.
+     */
+    private fun startLoopTransitionWhenTargetReady(
+        forward: Boolean,
+        targetPosition: Int,
+        overlayView: ImageView,
+        duration: Long
+    ) {
+        var hasStartedAnimation = false
+
+        fun startAnimation() {
+            if (hasStartedAnimation || !mIsSlideshowActive || isDestroyed) {
+                if (!mIsSlideshowActive || isDestroyed) {
+                    clearLoopOverlay(true)
+                }
+                return
+            }
+            hasStartedAnimation = true
+
+            mSlideshowLoopAnimator?.cancel()
+            mSlideshowLoopAnimator = ValueAnimator.ofFloat(0f, 1f).apply {
+                this.duration = duration
+                if (config.slideshowAnimation == SLIDESHOW_ANIMATION_SLIDE) {
+                    interpolator = DecelerateInterpolator()
+                }
+
+                // Animate outgoing overlay view and incoming fragment view simultaneously
+                addUpdateListener { animator ->
+                    val factor = animator.animatedValue as Float
+                    val outgoingPos = if (forward) -factor else factor
+                    val incomingPos = if (forward) 1f - factor else -1f + factor
+
+                    applyLoopTransformation(overlayView, outgoingPos)
+
+                    val adapter = binding.viewPager.adapter as? MyPagerAdapter
+                    val targetFragmentView = adapter?.getCurrentFragment(targetPosition)?.view
+                    if (targetFragmentView != null) {
+                        applyLoopTransformation(targetFragmentView, incomingPos)
+                    }
+                }
+
+                addListener(object : AnimatorListenerAdapter() {
+                    override fun onAnimationEnd(animation: Animator) {
+                        // Successful completion: remove overlay and continue slideshow normally
+                        clearLoopOverlay(false)
+                    }
+
+                    override fun onAnimationCancel(animation: Animator) {
+                        // Cancelled by user tap: remove overlay and restore original start position
+                        clearLoopOverlay(true)
+                    }
+                })
+                start()
+            }
+        }
+
+        val startTime = System.currentTimeMillis()
+
+        // Polling loop checking image readiness (max 1.5s timeout safeguard).
+        // We poll because two asynchronous steps must complete before starting the animation:
+        // 1. ViewPager needs time to instantiate and inflate the target fragment view.
+        // 2. The fragment needs time to load and decode the image via Glide.
+        val checkRunnable = object : Runnable {
+            override fun run() {
+                if (hasStartedAnimation || !mIsSlideshowActive || isDestroyed) {
+                    if (!mIsSlideshowActive || isDestroyed) {
+                        clearLoopOverlay(true)
+                    }
+                    return
+                }
+
+                val fragment = (binding.viewPager.adapter as? MyPagerAdapter)?.getCurrentFragment(targetPosition)
+                val gesturesView = fragment?.view?.findViewById<ImageView>(R.id.gestures_view)
+                // gesturesView.drawable holds the reference to the decoded image Drawable loaded by Glide.
+                // A non-null drawable proves Glide has finished loading and the image is ready to display.
+                val isDrawableReady = gesturesView?.drawable != null
+                val isTimedOut = System.currentTimeMillis() - startTime >= MAX_WAIT_TIME_MS
+
+                if (isDrawableReady || isTimedOut || fragment is VideoFragment) {
+                    startAnimation()
+                } else {
+                    // Re-check every 16ms (~1 frame at 60Hz) until fragment is inflated and image is loaded
+                    binding.viewPager.postDelayed(this, POLL_INTERVAL_MS)
+                }
+            }
+        }
+
+        binding.viewPager.post(checkRunnable)
+    }
+
+    /**
+     * Cleans up loop animation overlays, cancels running animators without recursion,
+     * recycles bitmap memory, and optionally restores the start position if cancelled.
+     */
+    private fun clearLoopOverlay(isCancelled: Boolean = false) {
+        val loopAnim = mSlideshowLoopAnimator
+        mSlideshowLoopAnimator = null
+        loopAnim?.removeAllListeners()
+        loopAnim?.cancel()
+
+        val transAnim = mSlideshowTransitionAnimator
+        mSlideshowTransitionAnimator = null
+        transAnim?.removeAllListeners()
+        transAnim?.cancel()
+
+        try {
+            if (binding.viewPager.isFakeDragging) {
+                binding.viewPager.endFakeDrag()
+            }
+        } catch (ignored: Exception) {}
+
+        // If transition was cancelled mid-way (e.g. user tapped screen), restore original start position
+        if (isCancelled && mLoopStartPosition != -1) {
+            try {
+                binding.viewPager.setCurrentItem(mLoopStartPosition, false)
+            } catch (ignored: Exception) {}
+        }
+        mLoopStartPosition = -1
+
+        mSlideshowLoopOverlayView?.let { view ->
+            try {
+                binding.fragmentHolder.removeView(view)
+            } catch (ignored: Exception) {}
+        }
+        mSlideshowLoopOverlayView = null
+
+        mSlideshowLoopOverlayBitmap?.recycle()
+        mSlideshowLoopOverlayBitmap = null
+
+        val currentPos = binding.viewPager.currentItem
+        val currentFragmentView = (binding.viewPager.adapter as? MyPagerAdapter)?.getCurrentFragment(currentPos)?.view
+        if (currentFragmentView != null) {
+            resetLoopTransformation(currentFragmentView)
+        }
+    }
+
     private fun stopSlideshow() {
         if (mIsSlideshowActive) {
+            clearLoopOverlay(true)
             binding.viewPager.setPageTransformer(false, DefaultPageTransformer())
             mIsSlideshowActive = false
             showSystemUI()
