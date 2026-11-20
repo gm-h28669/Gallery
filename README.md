@@ -2,6 +2,12 @@
 
 *This app was forked from [Fossify Gallery](https://github.com/FossifyOrg/Gallery) project. At time of forking the latest release of Fossify Gallery was 1.13.1.*
 
+## What's New in Release 1.13.4 ##
+
+### Fixes ###
+* Fixed slideshow loop transition animations and black screen delays for loop boundary edge cases (last <-> first image).
+* Improved slideshow interruption handling to instantly cancel active animations and restore view position when tapped.
+
 ## What's New in Release 1.13.3 ##
 
 ### Fixes ###

@@ -5,7 +5,7 @@ kotlin = "2.3.10"
 ksp = "2.3.6"
 #Detekt
 detekt = "1.23.8"
-detektCompose = "0.6.4"
+detektCompose = "0.6.8"
 #AndroidX
 androidx-lifecycle = "2.10.0"
 androidx-print = "1.1.0"
@@ -15,11 +15,11 @@ androidx-documentfile = "1.1.0"
 #exif
 exif = "1.0.1"
 #Room
-room = "2.8.4"
+room = "2.8.5"
 #Fossify
 commons = "6.1.6"
 #Gradle4
-gradlePlugins-agp = "9.5.1"
+gradlePlugins-agp = "9.5.2"
 #Other
 androidGifDrawable = "1.2.32"
 androidImageCropper = "4.7.0"
@@ -31,9 +31,9 @@ gestureviews = "e706487a14"
 androidsvgAar = "1.4"
 androidphotofilters = "193f2ae509"
 sanselan = "0.97-incubator"
-media3Exoplayer = "1.11.0"
-okhttp = "5.5.0"
-okio = "3.18.1"
+media3Exoplayer = "1.11.1"
+okhttp = "5.5.1"
+okio = "3.18.2"
 picasso = "2.71828"
 subsamplingScaleImageView = "1.0.0"
 #build
